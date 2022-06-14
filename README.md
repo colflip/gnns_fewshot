@@ -6,6 +6,6 @@ Code implementation of GNNs in few-shot: GCN, GAT, GraphSAGE to the node classif
 
 PyTorch>=1.0.0
 
-# License
+# license
 
 MIT
