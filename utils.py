@@ -8,32 +8,35 @@ from torch_geometric.datasets import Coauthor, Amazon, Planetoid, CoraFull
 
 def args_parse():
     parser = argparse.ArgumentParser(description='Graph arguments.')
+    parser.add_argument('--loop', type=int, default=500, help='epoch')
+
     parser.add_argument('--cuda', type=int, default=1, help='cuda number')
-    parser.add_argument('--dataset', type=str, default='Computers', help='Cora/CiteSeer/cs/Computers/Photo/CoraFull')
+    parser.add_argument('--dataset', type=str, default='Computers', help='Cora/CiteSeer/Photo/cs/Computers/CoraFull')
     parser.add_argument('--hid_dim', type=int, default=128, help='hidden dimension')
     parser.add_argument('--mid_dim', type=int, default=128, help='hidden dimension')
-    parser.add_argument('--lrate', type=float, default=0.001, help='learning rate')
-    parser.add_argument('--wdecay', type=float, default=0.0001, help='learning rate')
+    parser.add_argument('--l_rate', type=float, default=0.01, help='learning rate')
+    parser.add_argument('--w_decay', type=float, default=5e-4, help='learning rate')
     parser.add_argument('--epoch', type=int, default=100, help='epoch')
     parser.add_argument('--patience', type=int, default=100)
-    parser.add_argument('--nway', type=int, default=2, help='test_classes')
-    parser.add_argument('--spt_num', type=int, default=5, help='supprt set number')
-    parser.add_argument('--qry_num', type=int, default=90, help='query set number')
+    parser.add_argument('--n_way', type=int, default=2, help='test_classes')
+    parser.add_argument('--spt_num', type=int, default=1, help='supprt set number')
+    parser.add_argument('--qry_num', type=int, default=12, help='query set number')
     args = parser.parse_args()
 
     device = torch.device("cuda:{}".format(args.cuda) if torch.cuda.is_available() else "cpu")
 
     params = {
+        'loop': args.loop,
         'device': device,
         'cuda': args.cuda,
         'dataset': args.dataset,
         'hid_dim': args.hid_dim,
         'mid_dim': args.mid_dim,
-        'lrate': args.lrate,
-        'wdecay': args.wdecay,
+        'l_rate': args.l_rate,
+        'w_decay': args.w_decay,
         'epoch': args.epoch,
         'patience': args.patience,
-        'nway': args.nway,
+        'n_way': args.n_way,
         'spt_num': args.spt_num,
         'qry_num': args.qry_num
     }
@@ -41,30 +44,29 @@ def args_parse():
 
 
 def load_data(params):
-    dname = params['dataset']
-    if dname == "Cora":
+    d_name = params['dataset']
+    if d_name == "Cora":
         dataset = Planetoid(name='Cora', root='./data')
-    elif dname == 'CiteSeer':
+    elif d_name == 'CiteSeer':
         dataset = Planetoid(name='Citeseer', root='./data')
-    elif dname == 'cs':
+    elif d_name == 'cs':
         dataset = Coauthor(name='cs', root='./data')
-    elif dname == 'Computers':
+    elif d_name == 'Computers':
         dataset = Amazon(name='Computers', root='./data')
-    elif dname == 'Photo':
+    elif d_name == 'Photo':
         dataset = Amazon(name='Photo', root='./data')
-    elif dname == 'CoraFull':
-        dataset = CoraFull(root='./data')
+    elif d_name == 'CoraFull':
+        dataset = CoraFull(root='./data/CoraFull')
     else:
         return None
     data = dataset[0].to(params['device'])
-    labels = (data.y).clone().detach()
+    labels = data.y.clone().detach()
     num_classes = dataset.num_classes
     node_num = len(data.y)
 
-    params['nway'] = num_classes * 2 // 5
+    params['n_way'] = num_classes * 2 // 5
     all_classes = [i for i in range(num_classes)]
-    test_classes = random.sample(all_classes, params['nway'])
-    train_classes = [i for i in all_classes if i not in test_classes]
+    test_classes = random.sample(all_classes, params['n_way'])
 
     params['in_dim'] = dataset.num_features
     params['out_dim'] = num_classes
@@ -74,16 +76,12 @@ def load_data(params):
         cls = labels[i]
         masks[cls].append(i)
 
-    # meta测试集的mask
     mask_train = []
     mask_test = []
 
     for cls in test_classes:
         spt = random.sample(masks[cls], params['spt_num'])
         mask_train.extend(spt)
-        # for subitem in spt:
-        #     masks[cls].remove(subitem)
-
         if len(masks[cls]) > params['qry_num']:
             qry = random.sample(masks[cls], params['qry_num'])
         else:

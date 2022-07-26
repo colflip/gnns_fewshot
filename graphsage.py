@@ -22,7 +22,7 @@ class SAGE(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-def sage_train(model, optimizer, data, labels, mask_train, params):
+def graphsage_train(model, optimizer, data, labels, mask_train, params):
     model.train()
     min_loss = 9999
     patience = 0
@@ -47,32 +47,36 @@ def sage_train(model, optimizer, data, labels, mask_train, params):
 def main(dataset_p='', spt=''):
     print("run sage")
     mean_list = []
-    loop = 100
+
+    params = args_parse()
+    if spt != '':
+        params['spt_num'] = spt
+    if dataset_p != '':
+        params['dataset'] = dataset_p
+    loop = params['loop']
 
     for i in range(loop):
         setup_seed(i)
-        params = args_parse()
-        if spt != '':
-            params['spt_num'] = spt
-        if dataset_p != '':
-            params['dataset'] = dataset_p
+
         data, labels, mask_train, mask_test = load_data(params)
 
         model = SAGE(params['in_dim'], params['hid_dim'], params['out_dim']).to(params['device'])
         optimizer = torch.optim.Adam([
             {'params': model.conv1.parameters()},
             {'params': model.conv2.parameters()}],
-            lr=params['lrate'], weight_decay=params['wdecay'])
+            lr=params['l_rate'], weight_decay=params['w_decay'])
 
-        sage_train(model, optimizer, data, labels, mask_train, params)
+        graphsage_train(model, optimizer, data, labels, mask_train, params)
 
         acc = accuracy(model, data, labels, mask_test)
         # print('i: {},acc: {}'.format(i, acc))
         mean_list.append(acc)
 
+    mean, var = round(np.mean(mean_list) * 100, 2), round(np.var(mean_list) * 100, 2)
+    mean_var = str(mean) + '±' + str(var)
     print(
-        "sage {} nway: {} spt: {} loop: {}, mean: {}".format(params['dataset'], params['nway'], params['spt_num'], loop,
-                                                             np.mean(mean_list)))
+        "sage {} n_way: {} spt: {} loop: {}, mean/var: {}".format(params['dataset'], params['n_way'], params['spt_num'],
+                                                                  loop, mean_var))
+    return mean_var
 
-
-main()
+# main()

@@ -46,22 +46,24 @@ def gat_train(model, optimizer, data, labels, mask_train, params):
 def main(dataset_p='', spt=''):
     print("run gat")
     mean_list = []
-    loop = 100
+
+    params = args_parse()
+    if spt != '':
+        params['spt_num'] = spt
+    if dataset_p != '':
+        params['dataset'] = dataset_p
+    loop = params['loop']
 
     for i in range(loop):
         setup_seed(i)
-        params = args_parse()
-        if spt != '':
-            params['spt_num'] = spt
-        if dataset_p != '':
-            params['dataset'] = dataset_p
+
         data, labels, mask_train, mask_test = load_data(params)
 
         model = GAT(params['in_dim'], params['hid_dim'], params['out_dim']).to(params['device'])
         optimizer = torch.optim.Adam([
             {'params': model.conv1.parameters()},
             {'params': model.conv2.parameters()}],
-            lr=params['lrate'], weight_decay=params['wdecay'])
+            lr=params['l_rate'], weight_decay=params['w_decay'])
 
         gat_train(model, optimizer, data, labels, mask_train, params)
 
@@ -69,9 +71,11 @@ def main(dataset_p='', spt=''):
         # print('i: {}, acc: {}'.format(i, acc))
         mean_list.append(acc)
 
+    mean, var = round(np.mean(mean_list) * 100, 2), round(np.var(mean_list) * 100, 2)
+    mean_var = str(mean) + '±' + str(var)
     print(
-        "gat {} nway: {} spt: {} loop: {}, mean: {}".format(params['dataset'], params['nway'], params['spt_num'], loop,
-                                                            np.mean(mean_list)))
+        "gat {} n_way: {} spt: {} loop: {}, mean/var: {}".format(params['dataset'], params['n_way'], params['spt_num'],
+                                                                 loop, mean_var))
+    return mean_var
 
-
-main()
+# main()

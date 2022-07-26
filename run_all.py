@@ -1,11 +1,32 @@
+import csv
+
+import datetime
+
 import gat
 import gcn
 import graphsage
 
-dataset = ['Cora', 'CiteSeer', 'Photo', 'cs', 'Computers']
+dataset = ['Cora', 'CiteSeer', 'Photo', 'cs', 'Computers', 'CoraFull']
 spt = [1, 3, 5]
-for dataset_p in dataset:
-    for i in spt:
-        gcn.main(dataset_p, i)
-        gat.main(dataset_p, i)
-        graphsage.main(dataset_p, i)
+
+time_now = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+f = open('output/gnns-fw-' + str(time_now) + '.csv', 'w', encoding='utf-8', newline="")
+csv_writer = csv.writer(f)
+csv_writer.writerow(['models/shot/datasets', '', ] + dataset)
+
+for i in spt:
+    gcn_acc = ['gcn', i]
+    gat_acc = ['gat', i]
+    sage_acc = ['sage', i]
+    for dataset_p in dataset:
+        gcn_mean_var = gcn.main(dataset_p, i)
+        gcn_acc.append(gcn_mean_var)
+        gat_mean_var = gat.main(dataset_p, i)
+        gat_acc.append(gat_mean_var)
+        sage_mean_var = graphsage.main(dataset_p, i)
+        sage_acc.append(sage_mean_var)
+    csv_writer.writerow(gcn_acc)
+    csv_writer.writerow(gat_acc)
+    csv_writer.writerow(sage_acc)
+
+f.close()
