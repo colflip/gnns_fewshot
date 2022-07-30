@@ -71,10 +71,10 @@ def main(dataset_p='', spt=''):
         # print('loop step: {},acc: {}'.format(i, acc))
         mean_list.append(acc)
     mean, var = round(np.mean(mean_list) * 100, 2), round(np.var(mean_list) * 100, 2)
-    mean_var = str(mean) + '±' + str(var)
-    print(
-        "gcn {} n_way: {} spt: {} loop: {}, mean/var: {}".format(params['dataset'], params['n_way'], params['spt_num'],
-                                                                 loop, mean_var))
+    mean_var = str(mean) + '±' + str(var) + '[' + str(params['n_way']) + ']'
+    print("gcn {}n-way: {} k-spt: {}/{} loop: {}, mean/var: {}".format(params['dataset'], params['n_way'],
+                                                                       params['out_dim'], params['spt_num'], loop,
+                                                                       mean_var))
     return mean_var
 
 # main()
