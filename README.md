@@ -4,7 +4,7 @@ Code implementation of GNNs in few-shot learning: GCN, GAT, GraphSAGE to the nod
 
 ## dependencies
 
-* Python ≥ 3.10
+* Python ≥ 3.8
 * PyTorch ≥ 11.3
 * pyg ≥ 1.12.0
 
