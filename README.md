@@ -1,9 +1,17 @@
-# gnns_fewshot [[address](https://github.com/colflip/gnns_fewshot)]  
+# gnns_fewshot [[address](https://github.com/colflip/gnns_fewshot)]
+
 Code implementation of GNNs in few-shot learning: GCN, GAT, GraphSAGE to the node classification task of some datasets.
-# dependencies
-PyTorch>=1.0.0
-# results
-## novel class is num_class*2/5
+
+## dependencies
+
+* Python ≥ 3.10
+* PyTorch ≥ 11.3
+* pyg ≥ 1.12.0
+
+## results
+
+### novel class is num_class*2/5
+
 |      | model/shot/dataset | Cora          | CiteSeer      | Photo         | cs            | Computers     | CoraFull       |
 |------|--------------------|---------------|---------------|---------------|---------------|---------------|----------------|
 | GCN  | 1                  | 72.43±1.97[2] | 64.9±1.75[2]  | 78.69±2.49[3] | 83.51±0.88[6] | 74.35±1.99[4] | 34.56±0.22[28] |
@@ -17,7 +25,8 @@ PyTorch>=1.0.0
 |  | 5                  | 87.48±0.92[2] | 78.41±1.25[2] | 82.17±1.13[3] | 90.6±0.31[6]  | 75.69±1.31[4] | 57.68±0.16[28] |
 
 
-## novel class is 2
+### novel class is 2
+
 |  | **model/shot/dataset** | **Cora**   | **CiteSeer** | **Photo**  | **cs**     | **Computers** | **CoraFull** | **PubMed** |
 |---|------------------------|------------|--------------|------------|------------|---------------|--------------|------------|
 | GCN | 1                      | 72.12±1.96 | 64.82±1.76   | 83.82±2.76 | 94.6±0.86  | 83.53±3.21    |
@@ -29,5 +38,13 @@ PyTorch>=1.0.0
 | GraphSAGE | 1                      | 71.38±1.78 | 64.55±1.64   | 60.6±1.82  | 89.86±1.79 | 57.57±1.32    |
 |   | 3                      | 83.63±1.11 | 73.38±1.57   | 76.25±2.6  | 96.03±0.5  | 69.92±2.49    |
 |   | 5                      | 87.7±0.84  | 77.54±1.27   | 84.35±1.58 | 96.3±0.33  | 80.01±2.3     |
-# license
-MIT
+
+## license
+
+It is under the MIT license. See the [LICENSE](LICENSE) file for details.
+
+***
+
+“一切恩爱会、无常难得久、生世多畏惧、命危于晨露，**由爱故生忧，由爱故生怖，若离于爱者，无忧亦无怖。**”
+
+![img](r/img.png)
