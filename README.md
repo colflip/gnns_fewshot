@@ -47,4 +47,4 @@ It is under the MIT license. See the [LICENSE](LICENSE) file for details.
 
 “一切恩爱会、无常难得久、生世多畏惧、命危于晨露，**由爱故生忧，由爱故生怖，若离于爱者，无忧亦无怖。**”
 
-![img](r/img.png)
+![](https://pic1.zhimg.com/80/v2-5fa69cb8df03fc653aac644d611392ce_720w.webp?source=1940ef5c)
